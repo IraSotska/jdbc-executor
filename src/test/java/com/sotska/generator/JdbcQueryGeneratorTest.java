@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -23,6 +24,19 @@ class JdbcQueryGeneratorTest {
         verify(preparedStatement).setBoolean(3, true);
         verify(preparedStatement).setLong(4, 2L);
         verify(preparedStatement).setInt(5, 12);
+
+        verifyNoMoreInteractions(preparedStatement);
+    }
+
+    @Test
+    void shouldEnrichParamsWithNullValue() throws SQLException {
+        var preparedStatement = mock(PreparedStatement.class);
+        var params = new ArrayList<>();
+        params.add(null);
+
+        jdbcQueryGenerator.enrichParams(preparedStatement, params);
+
+        verify(preparedStatement).setObject(1, null);
 
         verifyNoMoreInteractions(preparedStatement);
     }
